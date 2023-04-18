@@ -3,11 +3,11 @@ require('dotenv').config()
 
 const verifyToken=(req,res,next)=>{
     const {email,chrome_id}=req.query
-    console.log(req.headers)
     const token=req.headers.authorization
 
 
     if(token){
+        console.log('Token found');
         jwt.verify(token,process.env.jwtSecret,(err,user)=>{
             if(err){
                 return res.status(401).json({message:"Not authorized"})
@@ -22,7 +22,8 @@ const verifyToken=(req,res,next)=>{
 
     }
     else{
-        return res.status(401).json({message:'Not authorized. Token unavailable'})
+        console.log('Missing token');
+        return res.status(401).json({message:'Not authorized. Missing token'})
     }
 }
 
