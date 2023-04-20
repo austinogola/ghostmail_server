@@ -2,6 +2,7 @@ const router=require("express").Router()
 // const formMail=require('../../../middleware/genMail')
 const formMail=require('../middleware/genMail')
 const verify=require('../middleware/token')
+const updateRem=require('../auth/update')
 
 router.post('/mail',async(req,res)=>{
     console.log('Received generate request')
@@ -19,13 +20,18 @@ router.post('/mail',async(req,res)=>{
         if(prompt){
             console.log('prompt present');
             //check if a valid text here
-            let mailResult=await formMail(prompt)
-            if(mailResult.error){
-                res.status(500).json({message:'server error, please try again'})
-            }else{
-                let content=mailResult.message.content
-                res.status(200).json({mailResult:content})
-            }
+            // let mailResult=await formMail(req,res,prompt)
+            updateRem(req,res)
+            formMail(req,res,prompt)
+
+
+            
+            // if(mailResult.error){
+            //     res.status(500).json({message:'server error, please try again'})
+            // }else{
+            //     let content=mailResult.message.content
+            //     res.status(200).json({mailResult:content})
+            // }
     
         }else{
             console.log('Missing prompt');

@@ -2,7 +2,8 @@
 const Configuration =require("openai").Configuration
 const OpenAIApi=require("openai").OpenAIApi
 require('dotenv').config()
-
+const fs = require('fs');
+var Readable = require('stream').Readable
 
 
 const configuration = new Configuration({
@@ -13,9 +14,11 @@ const openai = new OpenAIApi(configuration)
 
 
 
-const formMail=async(prompt)=>{
+const formMail=async(req,res,prompt)=>{
 
-    return new Promise(async(resolve,reject)=>{
+    var st = new Readable()
+
+    // return new Promise(async(resolve,reject)=>{
         
         let content= `Write an email ${prompt}`
 
@@ -41,7 +44,7 @@ const formMail=async(prompt)=>{
 
             // let result=[]
 
-            let res=await openai.createChatCompletion({
+            let resp=await openai.createChatCompletion({
                 "model":'gpt-3.5-turbo',
                 "messages":[
                     {"role": "user", "content": content}
@@ -49,62 +52,36 @@ const formMail=async(prompt)=>{
                 "stream":true
             },{responseType:'stream'})
 
-            res.data.on('data', async data=>{
+            let file=fs.createWriteStream('./p_file.txt')
+            let file2=fs.createReadStream('./p_file.txt')
+
+            resp.data.on('data', async data=>{
                 const lines=data.toString().split('\n').filter(line=>line.trim()!=='')
                 
                 for(const line of lines ){
                     const msg=line.replace(/^data: /,'')
                     if(msg=='[DONE]'){
-                        console.log('Stream finished');
+                        res.write('STREAM COMPLETELEY FINISHED','utf8')
+                        console.log('Stream Completelely finished');
                     }
                     else{
-
                         let parsed=JSON.parse(msg)
                         let delta=await parsed.choices[0].delta
 
                         if(delta.content){
                             let text=delta.content
-                            console.log(text);
+                            res.write(text,'utf8')
                         }
 
                         // console.log(parsed.choices[0].text);
                     }
                 }
             })
-            // res.data.on('data',console.log)
-            
-
-            // for await(const event of streamCompletion(res.data)){
-            //     let event_text = JSON.parse(event)
-            //     let data=event_text.choices[0]
-            //     console.log(data);
-            // }
-
-            
-            // let res=await openai.createChatCompletion({
-            //     "model":'gpt-3.5-turbo',
-            //     "messages":[
-            //         {"role": "user", "content": content}
-            //     ]
-            // })
-    
-            // if(res.status==200){
-            //     // let data=res.data
-
-            //     console.log('gen text successfully');
-            //     let infoN= res.data.choices[0]
-
-            //     resolve(infoN)
-            // }
-            // else{
-            //     console.log('Error fetching gen text');
-            //     resolve({error:'Error resolving prompt'})
-            // }
         }
         catch(err){
             console.log(err);
         }
-    })
+    // })
 
     
 }
