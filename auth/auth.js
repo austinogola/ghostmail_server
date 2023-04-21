@@ -62,7 +62,7 @@ const login=async(req,res,next)=>{
         //     httpOnly:true,
         //     maxAge:maxAge*1000
         // })
-        res.status(201).json({
+        res.status(200).json({
             massage:'User successfully logged in',
             user:{email,chrome_id},
             ghostToken:token
@@ -71,8 +71,7 @@ const login=async(req,res,next)=>{
     }
     catch(err){
         res.status(400).json({
-            message:'error logging in user',
-            error:err.message
+            message:err.message
         })
     }
 }
@@ -93,15 +92,12 @@ const check=async(email,chrome_id)=>{
     
 }
 
-const checkUsage=async(req,res,next)=>{
+const checkUsage=async(req,res)=>{
     const {email,chrome_id}=req.query
 
     try{
-        // const acc=Account.findOne({email,chrome_id})
-
         Account.findOne({email,chrome_id})
         .then(resp=>{
-            console.log(resp);
             if(resp.is_paid){
                 res.status(200).json({
                     type:'paying user',

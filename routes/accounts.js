@@ -10,7 +10,7 @@ router.get('/init',async(req,res)=>{
     const {email,chrome_id}=req.query
 
     if(!email || !chrome_id){
-        res.status(400).json({massage:'missing value email or id'})
+        res.status(400).json({message:'missing value email or id'})
     }
     else{
         let accountPresent=await checkAcc(email,chrome_id)
@@ -23,10 +23,8 @@ router.get('/init',async(req,res)=>{
     }
 })
 
-router.get('/verify',async(req,res)=>{
-    verify(req,res)
+router.get('/verify',verify,async(req,res)=>{
     checkUsage(req,res)
-
 })
 
 

@@ -1,6 +1,7 @@
 const jwt=require('jsonwebtoken')
 require('dotenv').config()
 
+
 const verifyToken=(req,res,next)=>{
     const {email,chrome_id}=req.query
     const token=req.headers.authorization
@@ -12,11 +13,19 @@ const verifyToken=(req,res,next)=>{
             if(err){
                 return res.status(401).json({message:"Not authorized"})
             }else{
-                if(user.chrome_id!=chrome_id || user.email!=email){
-                   return res.status(401).json({message:"Not authorized"})
-                }else{
-                    // next()
+                if(user){
+                    if(user.chrome_id==chrome_id && user.email==email){
+                        console.log('User is verified');
+                        next()
+                    }
+                    else{
+                        return res.status(401).json({message:"Not authorized"}) 
+                    }
                 }
+                else{
+                    return res.status(401).json({message:"Not authorized"}) 
+                }
+                
             }
         })
 

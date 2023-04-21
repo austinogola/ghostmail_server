@@ -7,7 +7,6 @@ const updateRem=async(req,res)=>{
     console.log('Updating now')
     const {email,chrome_id}=req.query
     let {prompt}=req.body
-    verify(req,res)
 
     const em_acnt=await Account.findOne({email})
     console.log("The account",em_acnt)
