@@ -5,18 +5,10 @@ const AccountSchema=new mongoose.Schema({
         type:String,
         unique:true,
         required:true
-    },
-    chrome_id:{
-        required:true,
-        type:String
-    },
+    },           
     is_paid:{
         type:Boolean,
         default:false
-    },
-    remaining_today:{
-        type:Number,
-        dafault:10
     }
     
 })

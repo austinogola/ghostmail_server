@@ -16,44 +16,31 @@ const openai = new OpenAIApi(configuration)
 
 const formMail=async(req,res,prompt)=>{
 
-    var st = new Readable()
-
     // return new Promise(async(resolve,reject)=>{
         
         let content= `Write an email ${prompt}`
 
+        let lan='en'
+
         try{
-            console.log('Attemting with prompt',content);
+            console.log('Attempting with prompt',content);
 
-            // const req=https.request({
-            //     hostname:'api.openai.com',
-            //     path:'/v1/completions',
-            //     method:'POST',
-            //     headers:{
-            //         "Content-Type":"application/json",
-            //         "Authorization":"Bearer " + process.env.openApiKey
-            //     }
-            // },(res)=>{
-            //     res.on('data',(chunk)=>{
-            //         console.log('Body',chunk);
-            //     })
-            //     res.on('end',(chunk)=>{
-            //         console.log('No more data in response');
-            //     })
-            // })
+            let resp
 
-            // let result=[]
+            try {
+                resp=await openai.createChatCompletion({
+                    "model":'gpt-3.5-turbo',
+                    "messages":[
+                        {"role": "user", "content": content}
+                    ],
+                    "stream":true
+                },{responseType:'stream'})
+                
+            } catch (error) {
+                console.log('Error generating');
+            }
 
-            let resp=await openai.createChatCompletion({
-                "model":'gpt-3.5-turbo',
-                "messages":[
-                    {"role": "user", "content": content}
-                ],
-                "stream":true
-            },{responseType:'stream'})
-
-            let file=fs.createWriteStream('./p_file.txt')
-            let file2=fs.createReadStream('./p_file.txt')
+            console.log(resp.status);
 
             resp.data.on('data', async data=>{
                 const lines=data.toString().split('\n').filter(line=>line.trim()!=='')
@@ -79,7 +66,9 @@ const formMail=async(req,res,prompt)=>{
             })
         }
         catch(err){
-            console.log(err);
+            console.log(err.message);
+            console.log(Object.keys(err))
+            // console.log(err.response)
         }
     // })
 

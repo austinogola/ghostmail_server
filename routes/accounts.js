@@ -7,13 +7,13 @@ const verify=require('../middleware/token')
 const checkUsage=auth.checkUsage
 
 router.get('/init',async(req,res)=>{
-    const {email,chrome_id}=req.query
+    const {email}=req.query
 
-    if(!email || !chrome_id){
-        res.status(400).json({message:'missing value email or id'})
+    if(!email){
+        res.status(400).json({message:'missing value email'})
     }
     else{
-        let accountPresent=await checkAcc(email,chrome_id)
+        let accountPresent=await checkAcc(email)
         if(accountPresent){
             loginAcc(req,res)
         }else{

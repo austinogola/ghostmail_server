@@ -4,6 +4,9 @@ const mongoose=require('mongoose')
 const cors=require('cors')
 const cookieParser=require('cookie-parser')
 var bodyParser = require('body-parser')
+const fs=require('fs')
+
+const locales=require('./langs.json')
 
 const connectDb=require('./config/db')
 
@@ -22,12 +25,9 @@ app.use(bodyParser.urlencoded({ extended: true }))
 //connect to mongodb
 connectDb()
 
-app.get("/testy",(req,res)=>{
-    res.send("Testing is working too")
-})
-
 app.use('/generate',require('./routes/generate'))
 app.use('/accounts',require('./routes/accounts'))
+app.use('/oauth',require('./routes/oauth'))
 
 mongoose.connection.once('open',()=>{
     console.log("Connected to mongoDB")
@@ -42,3 +42,19 @@ mongoose.connection.once('open',()=>{
 //     console.log(`An error occurred: ${err.message}`)
 //     app.close(() => process.exit(1))
 //   })
+
+
+
+// fs.mkdir(dir,err=>{
+//     if(err){
+//         console.log(err);
+//     }
+// })
+
+// Object.keys(locales).forEach(name=>{
+//     fs.open(`./_locales/${name}/messages.json`,'w',err=>{
+//     if(err){
+//         console.log(err);
+//     }
+// })
+// })

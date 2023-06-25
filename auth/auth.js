@@ -1,15 +1,15 @@
-const Account=require('../model/account')
+    const Account=require('../model/account')
 const jwt=require('jsonwebtoken')
 require('dotenv').config()
 
 const register=async(req,res,next)=>{
+
     return new Promise((resolve,reject)=>{
-        const {email,chrome_id}=req.query
+        const {email}=req.query
         try{
             Account.create({
                 email,
                 chrome_id,
-                remaining_today:10
             })
             .then(account=>{
                 const maxAge = 3 * 60 * 60;
@@ -79,10 +79,9 @@ const login=async(req,res,next)=>{
 const check=async(email,chrome_id)=>{
     return new Promise(async(resolve,reject)=>{
         const em_acnt=await Account.findOne({email})
-        const id_acnt=await Account.findOne({chrome_id})
 
-        if(em_acnt,id_acnt){
-            console.log('Both email and id found')
+        if(em_acnt){
+            console.log('Email id found')
             resolve (true)
         }
         else{
@@ -93,14 +92,14 @@ const check=async(email,chrome_id)=>{
 }
 
 const checkUsage=async(req,res)=>{
-    const {email,chrome_id}=req.query
+    const {email}=req.query
 
     try{
-        Account.findOne({email,chrome_id})
+        Account.findOne({email})
         .then(resp=>{
             if(resp.is_paid){
                 res.status(200).json({
-                    type:'paying user',
+                    type:'pro user',
                     allow:true
                 })
             }
