@@ -11,26 +11,25 @@ const UserSchema=new mongoose.Schema({
         type:Boolean,
         default:false
     },
-    name:{
+    saved_name:{
         type:String,
     },
-    title:{
+    saved_title:{
         type:String
     },
-    useName:{
-        type:Boolean
-    },
-    useTitle:{
-        type:Boolean
+    to_use:{
+        type:String
     },
     remaining:{
-        type:Map,
-        of:Number
-        default:300
+        today:{type:Number,default:10},
+        this_month:{type:Number,default:300}
     },
     history:{
-        type:Map,
-        of:Number
+        type: Map,
+        of: {
+            attempted: { type: Number, default: 0 },
+            successful: { type: Number, default: 0 },
+        }
     }
     
 })

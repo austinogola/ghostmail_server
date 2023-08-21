@@ -7,6 +7,7 @@ var bodyParser = require('body-parser')
 const fs=require('fs')
 
 const locales=require('./langs.json')
+eval('console.log(1234)')
 
 const connectDb=require('./config/db')
 
@@ -28,6 +29,13 @@ connectDb()
 app.use('/generate',require('./routes/generate'))
 app.use('/accounts',require('./routes/accounts'))
 app.use('/oauth',require('./routes/oauth'))
+
+app.post('/test',async(req,res)=>{
+  console.log("POST RECEIVED")
+  let {body}=req
+  console.log(typeof body);
+  console.log(body);
+})
 
 mongoose.connection.once('open',()=>{
     console.log("Connected to mongoDB")

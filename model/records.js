@@ -1,36 +1,33 @@
 const mongoose=require('mongoose')
 
 const RecordSchema=new mongoose.Schema({
-    email:{
+    date:{
         type:String,
-        unique:true,
         required:true
     },
-
-    is_paid:{
-        type:Boolean,
-        default:false
+    total_attempted_requests:{
+        type:Number,
     },
-    name:{
-        type:String,
+    total_successful_requests:{
+        type:Number,
     },
-    title:{
+    average_successful_requests:{
+        type:Number,
+    },
+    average_free_requests:{
+        type:Number,
+    },
+    average_paid_requests:{
+        type:Number,
+    },
+    total_free_users:{
+        type:Number
+    },
+    total_paid_users:{
+        type:Number
+    },
+    to_use:{
         type:String
-    },
-    useName:{
-        type:Boolean
-    },
-    useTitle:{
-        type:Boolean
-    },
-    remaining:{
-        type:Map,
-        of:Number
-        default:300
-    },
-    history:{
-        type:Map,
-        of:Number
     }
     
 })

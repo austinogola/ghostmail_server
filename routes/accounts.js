@@ -10,7 +10,7 @@ router.get('/init',async(req,res)=>{
     const {email}=req.query
 
     if(!email){
-        res.status(400).json({message:'missing value email'})
+        res.status(400).json({message:'missing email'})
     }
     else{
         let accountPresent=await checkAcc(email)

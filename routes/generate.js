@@ -7,16 +7,16 @@ const updateRem=require('../auth/update')
 router.post('/mail',verify,async(req,res)=>{
     console.log('Received generate request')
     
-    const {email,chrome_id}=req.query
-    if(!email || !chrome_id){
-        console.log('Missing email or id');
-        res.status(400).json({message:'missing value email or id'})
+    const {email}=req.query
+    if(!email){
+        console.log('Missing email id');
+        res.status(400).json({message:'missing email id'})
     }
     else{
         let {prompt}=req.body
         if(prompt){
-            updateRem(req,res)
             formMail(req,res,prompt)
+            updateRem(req,res)
         }else{
             console.log('Missing prompt');
             res.status(400).json({message:'invalid,missing prompt'})

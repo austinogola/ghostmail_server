@@ -1,4 +1,5 @@
-    const Account=require('../model/account')
+const Account=require('../model/account')
+const User=require('../model/user')
 const jwt=require('jsonwebtoken')
 require('dotenv').config()
 
@@ -9,11 +10,21 @@ const register=async(req,res,next)=>{
         try{
             Account.create({
                 email,
-                chrome_id,
             })
             .then(account=>{
+                let today=new Date()
+                let todayString=`${today.getFullYear()}-${today.getMonth()+1}-${today.getDate()}`
+                
                 const maxAge = 3 * 60 * 60;
                 const {chrome_id,email}=account
+                let userObject={
+                    email,is_paid:false,saved_name:'',saved_title:'',to_use:'',
+                    remaining:{today:10,this_month:300}
+                }
+                let history={}
+                history[todayString]={attempted:0,successful:0}
+                userObject.history=history
+                User.create(userObject)
 
                 const token=jwt.sign(
                     {chrome_id,email},
@@ -44,14 +55,14 @@ const register=async(req,res,next)=>{
 }
 
 const login=async(req,res,next)=>{
-    const {email,chrome_id}=req.query
+    const {email}=req.query
 
     try{
 
         const maxAge = 3 * 60 * 60;
 
         const token=await jwt.sign(
-            {chrome_id,email},
+            {email},
             process.env.jwtSecret,
             {
                 expiresIn:maxAge
@@ -64,7 +75,7 @@ const login=async(req,res,next)=>{
         // })
         res.status(200).json({
             massage:'User successfully logged in',
-            user:{email,chrome_id},
+            user:{email},
             ghostToken:token
         })
 
@@ -76,7 +87,7 @@ const login=async(req,res,next)=>{
     }
 }
 
-const check=async(email,chrome_id)=>{
+const check=async(email)=>{
     return new Promise(async(resolve,reject)=>{
         const em_acnt=await Account.findOne({email})
 
@@ -95,28 +106,30 @@ const checkUsage=async(req,res)=>{
     const {email}=req.query
 
     try{
-        Account.findOne({email})
+        User.findOne({email})
         .then(resp=>{
             if(resp.is_paid){
                 res.status(200).json({
-                    type:'pro user',
+                    type:'pro',
                     allow:true
                 })
             }
             else{
-                let rema=resp.remaining_today
-                if(rema>0){
+                let remainingToday=resp.remaining.today>0
+                let remainingThisMonth=resp.remaining.this_month>0
+
+                let 
+                if(remainingThisMonth && remainingToday){
                     res.status(200).json({
-                        type:'free user',
+                        type:'free',
                         allow:true,
-                        to_remain:rema-1
                     })
                 }
                 else{
                     res.status(200).json({
-                        type:'free user',
+                        type:'free',
                         allow:false,
-                        to_remain:rema-1
+                        reason:remainingToday?'month':'today'
                     })
                 }
                 
